@@ -1,0 +1,77 @@
+```{r}
+#| child: aaa.Rmd
+#| include: false
+```
+
+`r descr_models("pls", "plsr")`
+
+## Tuning Parameters
+
+```{r}
+#| label: plsr-param-info
+#| echo: false
+defaults <- 
+  tibble::tibble(parsnip = "num_comp",
+                 default = "2L")
+
+param <-
+  pls() |> 
+  set_engine("plsr") |> 
+  set_mode("regression") |> 
+  make_parameter_list(defaults)
+```
+
+This model has `r nrow(param)` tuning parameters:
+
+```{r}
+#| label: plsr-param-list
+#| echo: false
+#| results: asis
+param$item
+```
+
+
+## Translation from parsnip to the underlying model call (regression)
+
+`r uses_extension("pls", "plsr", "regression")`
+
+```{r}
+#| label: plsr-reg
+library(plsmod)
+
+pls(num_comp = integer(1), predictor_prop = double(1)) |>
+  set_engine("plsr") |>
+  set_mode("regression") |>
+  translate()
+```
+
+[plsmod::pls_fit()] is a function that: 
+
+ - Converts the predictors and outcomes to matrices.
+ - Determines the number of predictors in the data.
+ - Adjusts `num_comp` if the value is larger than the number of factors.
+
+## Preprocessing requirements
+
+```{r}
+#| child: template-makes-dummies.Rmd
+```
+
+```{r}
+#| child: template-zv.Rmd
+```
+
+```{r}
+#| child: template-same-scale.Rmd
+```
+
+## Case weights
+
+```{r}
+#| child: template-no-case-weights.Rmd
+```
+
+## References
+
+ - Mevik BH, and Wehrens R (2007). "The pls package: principal component and partial least squares regression in R." Journal of Statistical software, 18, 1-23. 
+ 
