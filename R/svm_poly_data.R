@@ -7,7 +7,8 @@ set_model_mode("svm_poly", "regression")
 
 set_model_engine("svm_poly", "classification", "kernlab")
 set_model_engine("svm_poly", "regression", "kernlab")
-set_dependency("svm_poly", "kernlab", "kernlab")
+set_dependency("svm_poly", "kernlab", "kernlab", mode = "classification")
+set_dependency("svm_poly", "kernlab", "kernlab", mode = "regression")
 
 set_model_arg(
   model = "svm_poly",
@@ -23,7 +24,7 @@ set_model_arg(
   eng = "kernlab",
   parsnip = "degree",
   original = "degree",
-  func = list(pkg = "dials", fun = "degree"),
+  func = list(pkg = "dials", fun = "prod_degree", range = c(1L, 3L)),
   has_submodel = FALSE
 )
 
@@ -103,12 +104,11 @@ set_pred(
     pre = NULL,
     post = svm_reg_post,
     func = c(pkg = "kernlab", fun = "predict"),
-    args =
-      list(
-        object = quote(object$fit),
-        newdata = quote(new_data),
-        type = "response"
-      )
+    args = list(
+      object = quote(object$fit),
+      newdata = quote(new_data),
+      type = "response"
+    )
   )
 )
 
@@ -134,12 +134,11 @@ set_pred(
     pre = NULL,
     post = NULL,
     func = c(pkg = "kernlab", fun = "predict"),
-    args =
-      list(
-        object = quote(object$fit),
-        newdata = quote(new_data),
-        type = "response"
-      )
+    args = list(
+      object = quote(object$fit),
+      newdata = quote(new_data),
+      type = "response"
+    )
   )
 )
 
@@ -152,12 +151,11 @@ set_pred(
     pre = NULL,
     post = function(result, object) as_tibble(result),
     func = c(pkg = "kernlab", fun = "predict"),
-    args =
-      list(
-        object = quote(object$fit),
-        newdata = quote(new_data),
-        type = "probabilities"
-      )
+    args = list(
+      object = quote(object$fit),
+      newdata = quote(new_data),
+      type = "probabilities"
+    )
   )
 )
 
@@ -173,4 +171,3 @@ set_pred(
     args = list(object = quote(object$fit), newdata = quote(new_data))
   )
 )
-

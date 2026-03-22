@@ -12,7 +12,7 @@
       set_mode(rand_forest())
     Condition
       Error in `set_mode()`:
-      ! Available modes for model type rand_forest are: "unknown", "classification", "regression", and "censored regression".
+      ! Available modes for model type rand_forest are: "unknown", "classification", "regression", "censored regression", and "quantile regression".
 
 ---
 
@@ -100,7 +100,7 @@
       linear_reg(engine = "boop")
     Condition
       Error in `linear_reg()`:
-      x Engine "boop" is not supported for `linear_reg()`
+      x Engine "boop" is not supported for `linear_reg()`.
       i See `show_engines("linear_reg")`.
 
 ---

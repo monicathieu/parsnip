@@ -89,6 +89,23 @@ decision_tree(tree_depth = integer(1), min_n = integer(1)) |>
 #| child: template-tree-split-factors.Rmd
 ```
 
+## Case weights
+
+```{r}
+#| child: template-uses-case-weights.Rmd
+```
+
+## Prediction types
+
+```{r}
+#| label: predict-types
+
+parsnip:::get_from_env("decision_tree_predict") |>
+  dplyr::filter(engine == "partykit") |>
+  dplyr::select(mode, type)
+
+```
+
 ## Other details
 
 ```{r}
@@ -97,6 +114,8 @@ decision_tree(tree_depth = integer(1), min_n = integer(1)) |>
 
 ## References
 
+ - Hothorn, T., Hornik, K., & Zeileis, A. (2006). Unbiased recursive partitioning: A conditional inference framework. _Journal of Computational and Graphical Statistics_, 15(3), 651-674.
+ 
  - [partykit: A Modular Toolkit for Recursive Partytioning in R](https://jmlr.org/papers/v16/hothorn15a.html)
 
  - Kuhn, M, and K Johnson. 2013. _Applied Predictive Modeling_. Springer.

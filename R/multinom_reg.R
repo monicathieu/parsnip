@@ -46,11 +46,12 @@
 #' multinom_reg()
 #' @export
 multinom_reg <-
-  function(mode = "classification",
-           engine = "nnet",
-           penalty = NULL,
-           mixture = NULL) {
-
+  function(
+    mode = "classification",
+    engine = "nnet",
+    penalty = NULL,
+    mixture = NULL
+  ) {
     args <- list(
       penalty = enquo(penalty),
       mixture = enquo(mixture)
@@ -77,11 +78,14 @@ translate.multinom_reg <- translate.linear_reg
 #' @rdname parsnip_update
 #' @export
 update.multinom_reg <-
-  function(object,
-           parameters = NULL,
-           penalty = NULL, mixture = NULL,
-           fresh = FALSE, ...) {
-
+  function(
+    object,
+    parameters = NULL,
+    penalty = NULL,
+    mixture = NULL,
+    fresh = FALSE,
+    ...
+  ) {
     args <- list(
       penalty = enquo(penalty),
       mixture = enquo(mixture)
@@ -101,11 +105,23 @@ update.multinom_reg <-
 
 #' @export
 check_args.multinom_reg <- function(object, call = rlang::caller_env()) {
-
   args <- lapply(object$args, rlang::eval_tidy)
 
-  check_number_decimal(args$mixture, min = 0, max = 1, allow_null = TRUE, call = call, arg = "mixture")
-  check_number_decimal(args$penalty, min = 0, allow_null = TRUE, call = call, arg = "penalty")
+  check_number_decimal(
+    args$mixture,
+    min = 0,
+    max = 1,
+    allow_null = TRUE,
+    call = call,
+    arg = "mixture"
+  )
+  check_number_decimal(
+    args$penalty,
+    min = 0,
+    allow_null = TRUE,
+    call = call,
+    arg = "penalty"
+  )
 
   invisible(object)
 }
@@ -118,5 +134,5 @@ organize_nnet_prob <- function(x, object) {
     x <- matrix(x, nrow = 1)
     colnames(x) <- x_names
   }
-  format_classprobs(x)
+  format_predictions(x, "prob")
 }

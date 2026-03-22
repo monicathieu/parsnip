@@ -30,13 +30,13 @@
 #' @examplesIf !parsnip:::is_cran_check()
 #' lm_spec <- linear_reg(penalty = 0.01)
 #'
-#' # `penalty` is tranlsated to `lambda`
+#' # `penalty` is translated to `lambda`
 #' translate(lm_spec, engine = "glmnet")
 #'
 #' # `penalty` not applicable for this model.
 #' translate(lm_spec, engine = "lm")
 #'
-#' # `penalty` is tranlsated to `reg_param`
+#' # `penalty` is translated to `reg_param`
 #' translate(lm_spec, engine = "spark")
 #'
 #' # with a placeholder for an unknown argument value:
@@ -44,8 +44,9 @@
 #'
 #' @export
 
-translate <- function(x, ...)
+translate <- function(x, ...) {
   UseMethod("translate")
+}
 
 #' @rdname translate
 #' @export
@@ -76,8 +77,16 @@ translate.default <- function(x, engine = x$engine, ...) {
 
   # check secondary arguments to see if they are in the final
   # expression unless there are dots, warn if protected args are
-  # being altered
-  x$eng_args <- check_eng_args(x$eng_args, x$method$fit, arg_key$original)
+  # being altered. Only protect original names that have a different
+
+  # parsnip name (i.e., mapped args). Engine-specific args where
+  # parsnip = original should not be protected.
+  protected_original <- arg_key$original[arg_key$parsnip != arg_key$original]
+  x$eng_args <- check_eng_args(
+    args = x$eng_args,
+    obj = x$method$fit,
+    core_args = protected_original
+  )
 
   # keep only modified args
   modifed_args <- !purrr::map_lgl(actual_args, null_value)
@@ -108,11 +117,22 @@ get_model_spec <- function(model, mode, engine) {
 
   libs <- rlang::env_get(m_env, paste0(model, "_pkgs"))
   libs <- vctrs::vec_slice(libs$pkg, libs$engine == engine)
-  res$libs <- if (length(libs) > 0) {libs[[1]]} else {NULL}
+  res$libs <- if (length(libs) > 0) {
+    libs[[1]]
+  } else {
+    NULL
+  }
 
   fits <- rlang::env_get(m_env, paste0(model, "_fit"))
-  fits <- vctrs::vec_slice(fits$value, fits$mode == mode & fits$engine == engine)
-  res$fit <- if (length(fits) > 0) {fits[[1]]} else {NULL}
+  fits <- vctrs::vec_slice(
+    fits$value,
+    fits$mode == mode & fits$engine == engine
+  )
+  res$fit <- if (length(fits) > 0) {
+    fits[[1]]
+  } else {
+    NULL
+  }
 
   preds <- rlang::env_get(m_env, paste0(model, "_predict"))
   where <- preds$mode == mode & preds$engine == engine
@@ -151,7 +171,7 @@ deharmonize <- function(args, key) {
     dplyr::left_join(parsn, key, by = "parsnip") |>
     dplyr::arrange(order)
 
-  merged <- merged[!duplicated(merged$order),]
+  merged <- merged[!duplicated(merged$order), ]
 
   names(args) <- merged$original
   args[!is.na(merged$original)]
@@ -222,4 +242,3 @@ add_methods <- function(x, engine) {
   }
   res
 }
-

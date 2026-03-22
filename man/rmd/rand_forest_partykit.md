@@ -97,6 +97,33 @@ rand_forest() |>
 
 This engine does not require any special encoding of the predictors. Categorical predictors can be partitioned into groups of factor levels (e.g. `{a, c}` vs `{b, d}`) when splitting at a node. Dummy variables are not required for this model. 
 
+## Case weights
+
+
+This model can utilize case weights during model fitting. To use them, see the documentation in [case_weights] and the examples on `tidymodels.org`. 
+
+The `fit()` and `fit_xy()` arguments have arguments called `case_weights` that expect vectors of case weights. 
+
+## Prediction types
+
+
+``` r
+parsnip:::get_from_env("rand_forest_predict") |>
+  dplyr::filter(engine == "partykit") |>
+  dplyr::select(mode, type)
+```
+
+```
+## # A tibble: 5 x 2
+##   mode                type    
+##   <chr>               <chr>   
+## 1 censored regression time    
+## 2 censored regression survival
+## 3 regression          numeric 
+## 4 classification      class   
+## 5 classification      prob
+```
+
 ## Other details
 
 
@@ -105,6 +132,10 @@ Predictions of type `"time"` are predictions of the median survival time.
 
 ## References
 
+ - Hothorn, T., Hornik, K., & Zeileis, A. (2006). Unbiased recursive partitioning: A conditional inference framework. _Journal of Computational and Graphical Statistics_, 15(3), 651-674.
+ 
+ - Strobl, C., Boulesteix, A. L., Zeileis, A., & Hothorn, T. (2007). Bias in random forest variable importance measures: Illustrations, sources and a solution. _BMC bioinformatics_, 8(1), 25.
+ 
  - [partykit: A Modular Toolkit for Recursive Partytioning in R](https://jmlr.org/papers/v16/hothorn15a.html)
 
  - Kuhn, M, and K Johnson. 2013. _Applied Predictive Modeling_. Springer.

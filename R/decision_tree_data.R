@@ -121,12 +121,11 @@ set_pred(
     pre = NULL,
     post = NULL,
     func = c(pkg = NULL, fun = "predict"),
-    args =
-      list(
-        object = quote(object$fit),
-        newdata = quote(new_data),
-        type = "class"
-      )
+    args = list(
+      object = quote(object$fit),
+      newdata = quote(new_data),
+      type = "class"
+    )
   )
 )
 
@@ -169,6 +168,48 @@ set_model_arg(
   parsnip = "min_n",
   original = "minCases",
   func = list(pkg = "dials", fun = "min_n"),
+  has_submodel = FALSE
+)
+
+# Engine-specific tunable parameters for C5.0
+set_model_arg(
+  model = "decision_tree",
+  eng = "C5.0",
+  parsnip = "CF",
+  original = "CF",
+  func = list(pkg = "dials", fun = "confidence_factor"),
+  has_submodel = FALSE
+)
+set_model_arg(
+  model = "decision_tree",
+  eng = "C5.0",
+  parsnip = "noGlobalPruning",
+  original = "noGlobalPruning",
+  func = list(pkg = "dials", fun = "no_global_pruning"),
+  has_submodel = FALSE
+)
+set_model_arg(
+  model = "decision_tree",
+  eng = "C5.0",
+  parsnip = "winnow",
+  original = "winnow",
+  func = list(pkg = "dials", fun = "predictor_winnowing"),
+  has_submodel = FALSE
+)
+set_model_arg(
+  model = "decision_tree",
+  eng = "C5.0",
+  parsnip = "fuzzyThreshold",
+  original = "fuzzyThreshold",
+  func = list(pkg = "dials", fun = "fuzzy_thresholding"),
+  has_submodel = FALSE
+)
+set_model_arg(
+  model = "decision_tree",
+  eng = "C5.0",
+  parsnip = "bands",
+  original = "bands",
+  func = list(pkg = "dials", fun = "rule_bands"),
   has_submodel = FALSE
 )
 
@@ -221,12 +262,11 @@ set_pred(
       as_tibble(x)
     },
     func = c(fun = "predict"),
-    args =
-      list(
-        object = quote(object$fit),
-        newdata = quote(new_data),
-        type = "prob"
-      )
+    args = list(
+      object = quote(object$fit),
+      newdata = quote(new_data),
+      type = "prob"
+    )
   )
 )
 
@@ -240,8 +280,7 @@ set_pred(
     pre = NULL,
     post = NULL,
     func = c(fun = "predict"),
-    args = list(object = quote(object$fit),
-                newdata = quote(new_data))
+    args = list(object = quote(object$fit), newdata = quote(new_data))
   )
 )
 
@@ -249,7 +288,8 @@ set_pred(
 
 set_model_engine("decision_tree", "classification", "spark")
 set_model_engine("decision_tree", "regression", "spark")
-set_dependency("decision_tree", "spark", "sparklyr")
+set_dependency("decision_tree", "spark", "sparklyr", mode = "classification")
+set_dependency("decision_tree", "spark", "sparklyr", mode = "regression")
 
 set_model_arg(
   model = "decision_tree",
@@ -278,8 +318,7 @@ set_fit(
     data = c(formula = "formula", data = "x"),
     protect = c("x", "formula"),
     func = c(pkg = "sparklyr", fun = "ml_decision_tree_regressor"),
-    defaults =
-      list(seed = expr(sample.int(10 ^ 5, 1)))
+    defaults = list(seed = expr(sample.int(10^5, 1)))
   )
 )
 
@@ -304,8 +343,7 @@ set_fit(
     data = c(formula = "formula", data = "x"),
     protect = c("x", "formula"),
     func = c(pkg = "sparklyr", fun = "ml_decision_tree_classifier"),
-    defaults =
-      list(seed = expr(sample.int(10 ^ 5, 1)))
+    defaults = list(seed = expr(sample.int(10^5, 1)))
   )
 )
 
@@ -330,7 +368,7 @@ set_pred(
     pre = NULL,
     post = format_spark_num,
     func = c(pkg = "sparklyr", fun = "ml_predict"),
-    args = list(object = quote(object$fit), dataset = quote(new_data))
+    args = list(x = quote(object$fit), dataset = quote(new_data))
   )
 )
 
@@ -343,7 +381,7 @@ set_pred(
     pre = NULL,
     post = format_spark_class,
     func = c(pkg = "sparklyr", fun = "ml_predict"),
-    args = list(object = quote(object$fit), dataset = quote(new_data))
+    args = list(x = quote(object$fit), dataset = quote(new_data))
   )
 )
 
@@ -356,6 +394,6 @@ set_pred(
     pre = NULL,
     post = format_spark_probs,
     func = c(pkg = "sparklyr", fun = "ml_predict"),
-    args = list(object = quote(object$fit), dataset = quote(new_data))
+    args = list(x = quote(object$fit), dataset = quote(new_data))
   )
 )
